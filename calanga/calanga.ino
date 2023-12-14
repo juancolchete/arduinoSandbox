@@ -26,17 +26,17 @@ void loop() {
     calanga[11] = "|/\\/\\|    |/\\/\\|";
   }else{
     right = true;
-    calanga[0] = " .                  ";
-    calanga[1] = "| |       _.--._   ";
-    calanga[2] = "| |     .'()..()`. ";
-    calanga[3] = "| |    ( `-.__.-' )";
-    calanga[4] = "| |     \\        /   ";
-    calanga[5] = " \\ \\     \\      /   ";
-    calanga[6] = "   \\ \\ .' -.__.- `";
-    calanga[7] = " .'    .'  /-____-\\ ";
-    calanga[8] = ".'   -.\\  /-.____.-\\ ";
-    calanga[9] = "|/\\|\\|\\ \\`-.____.-'\\ ";
-    calanga[10] = "     .' `.      .' `.";
+    calanga[0] = " .                      ";
+    calanga[1] = "| |       _.--._        ";
+    calanga[2] = "| |     .'()..()`.      ";
+    calanga[3] = "| |    ( `-.__.-' )     ";
+    calanga[4] = "| |     \\        /     ";
+    calanga[5] = " \\ \\     \\      /    ";
+    calanga[6] = "   \\ \\ .' -.__.- `    ";
+    calanga[7] = " .'----.'  /-____-\\    ";
+    calanga[8] = ".'.---.\\  /-.____.-\\  ";
+    calanga[9] = "|/\\|\\|\\ \\`-.____.-'\\";
+    calanga[10] = "     .' `.      .' `.   ";
     calanga[11] = "    |/\\/\\|      |/\\/\\|";
   }
   M5.Lcd.setCursor(0, 30, 1);
@@ -64,5 +64,8 @@ void loop() {
   M5.Lcd.setCursor(0, 140, 1);
   M5.Lcd.printf(calanga[11]);
   M5.Lcd.setCursor(0, 150, 1);
+  M5.Rtc.GetBm8563Time();
+  M5.Lcd.setCursor(30, 180, 1);
+  M5.Lcd.printf("%02d : %02d : %02d", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
   delay(1000);
 }
