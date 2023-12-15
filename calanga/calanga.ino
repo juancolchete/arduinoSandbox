@@ -23,6 +23,7 @@ bool right = true;
 bool setDefaultColor = false;
 int lastHour;
 int lastMinute;
+bool lastPower;
 void loop() {
   // put your main code here, to run repeatedly:
   if(right == true){
@@ -82,15 +83,6 @@ void loop() {
   M5.Rtc.GetBm8563Time();
   M5.Lcd.setCursor(30, 180, 1);
   M5.Lcd.printf("%02d : %02d : %02d", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
-  M5.Lcd.setCursor(10, 200, 1);
-  M5.Lcd.printf("battery: %.2f%s",getBatteryLevel(),"%");
-  M5.Lcd.setCursor(10, 210, 1);
-  M5.Lcd.printf("charging: %d",getBatteryCharging());
-  delay(1000);
-  if(setDefaultColor == true){
-    m5.Lcd.fillScreen(BLACK);
-    setDefaultColor = false;
-  }
   if(lastHour != M5.Rtc.Hour){
     m5.Lcd.fillScreen(RED);
     lastHour = M5.Rtc.Hour;
@@ -100,5 +92,23 @@ void loop() {
     m5.Lcd.fillScreen(BLUE);
     lastMinute = M5.Rtc.Minute;
     setDefaultColor = true;
+  }
+  if(lastPower != getBatteryCharging()){
+    lastPower = getBatteryCharging();
+    if(lastPower){
+      m5.Lcd.fillScreen(GREEN);
+    }else{
+      m5.Lcd.fillScreen(RED);
+    }
+    setDefaultColor = true;
+  }
+  M5.Lcd.setCursor(10, 200, 1);
+  M5.Lcd.printf("battery: %.2f%s",getBatteryLevel(),"%");
+  M5.Lcd.setCursor(10, 210, 1);
+  M5.Lcd.printf("charging: %d",getBatteryCharging());
+  delay(1000);
+  if(setDefaultColor == true){
+    m5.Lcd.fillScreen(BLACK);
+    setDefaultColor = false;
   }
 }
