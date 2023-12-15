@@ -1,9 +1,21 @@
 #include <M5StickCPlus.h>
-#include <string>
 
+#include <string>
 void setup() {
   // put your setup code here, to run once:
   M5.begin();
+}
+
+double getBatteryLevel(void)
+{
+  float b = M5.Axp.GetVbatData() * 1.1 / 1000;
+  int battery = ((b - 3.0) / 1.2) * 100;
+  return battery;
+}
+bool getBatteryCharging(void)
+{
+  float c = M5.Axp.GetVapsData() * 1.4 / 1000;
+  return c > 4.5;
 }
 
 char *calanga[12];
@@ -67,5 +79,9 @@ void loop() {
   M5.Rtc.GetBm8563Time();
   M5.Lcd.setCursor(30, 180, 1);
   M5.Lcd.printf("%02d : %02d : %02d", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
+  M5.Lcd.setCursor(10, 200, 1);
+  M5.Lcd.printf("battery: %.2f%s",getBatteryLevel(),"%");
+  M5.Lcd.setCursor(10, 210, 1);
+  M5.Lcd.printf("charging: %d",getBatteryCharging());
   delay(1000);
 }
