@@ -83,8 +83,13 @@ void loop() {
   M5.Rtc.GetBm8563Time();
   M5.Lcd.setCursor(30, 180, 1);
   M5.Lcd.printf("%02d : %02d : %02d", M5.Rtc.Hour, M5.Rtc.Minute, M5.Rtc.Second);
+  M5.Lcd.setCursor(10, 200, 1);
+  M5.Lcd.printf("battery: %.2f%s",getBatteryLevel(),"%");
+  M5.Lcd.setCursor(10, 210, 1);
+  M5.Lcd.printf("charging: %d",getBatteryCharging());
   if(lastHour != M5.Rtc.Hour){
     m5.Lcd.fillScreen(RED);
+    M5.Beep.beep();
     lastHour = M5.Rtc.Hour;
     setDefaultColor = true;
   }
@@ -102,12 +107,9 @@ void loop() {
     }
     setDefaultColor = true;
   }
-  M5.Lcd.setCursor(10, 200, 1);
-  M5.Lcd.printf("battery: %.2f%s",getBatteryLevel(),"%");
-  M5.Lcd.setCursor(10, 210, 1);
-  M5.Lcd.printf("charging: %d",getBatteryCharging());
   delay(1000);
   if(setDefaultColor == true){
+    M5.Beep.mute();
     m5.Lcd.fillScreen(BLACK);
     setDefaultColor = false;
   }
