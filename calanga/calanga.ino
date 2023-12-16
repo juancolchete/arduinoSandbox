@@ -88,13 +88,13 @@ void loop() {
   M5.Lcd.setCursor(10, 210, 1);
   M5.Lcd.printf("charging: %d",getBatteryCharging());
   if(lastHour != M5.Rtc.Hour){
-    m5.Lcd.fillScreen(RED);
+    m5.Lcd.fillScreen(YELLOW);
     M5.Beep.beep();
     lastHour = M5.Rtc.Hour;
     setDefaultColor = true;
   }
   if(lastMinute != M5.Rtc.Minute){
-    m5.Lcd.fillScreen(BLUE);
+    m5.Lcd.fillScreen(WHITE);
     lastMinute = M5.Rtc.Minute;
     setDefaultColor = true;
   }
