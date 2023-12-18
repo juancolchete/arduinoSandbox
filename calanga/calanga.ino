@@ -2,7 +2,6 @@
 
 #include <string>
 void setup() {
-  // put your setup code here, to run once:
   M5.begin();
 }
 
@@ -25,7 +24,6 @@ int lastHour;
 int lastMinute;
 bool lastPower;
 void loop() {
-  // put your main code here, to run repeatedly:
   if(right == true){
     right = false;
     calanga[0] = "                   .";
@@ -100,7 +98,7 @@ void loop() {
   }
   if(lastPower != getBatteryCharging()){
     lastPower = getBatteryCharging();
-    if(lastPower){
+    if(lastPower == true){
       m5.Lcd.fillScreen(GREEN);
     }else{
       m5.Lcd.fillScreen(RED);
