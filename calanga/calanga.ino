@@ -85,6 +85,10 @@ void loop() {
   M5.Lcd.printf("battery: %.2f%s",getBatteryLevel(),"%");
   M5.Lcd.setCursor(10, 210, 1);
   M5.Lcd.printf("charging: %d",getBatteryCharging());
+  M5.Lcd.setCursor(10, 220, 1);
+  if(digitalRead(M5_BUTTON_HOME) == false){
+    M5.Lcd.printf("Merry christmas!!");
+  }
   if(lastHour != M5.Rtc.Hour){
     m5.Lcd.fillScreen(YELLOW);
     M5.Beep.beep();
