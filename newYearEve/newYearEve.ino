@@ -8,8 +8,9 @@ void setup() {
 }
 
 void newYearEve(){
+  m5.Lcd.fillScreen(BLACK);
   M5.Lcd.setCursor(0, 0);
-  M5.Lcd.print("\n Happy New \n Year's Eve!!");
+  M5.Lcd.print("\n Happy New \n Year's Eve!");
 }
 
 void loop() {
@@ -18,14 +19,12 @@ void loop() {
   int hour = M5.Rtc.Hour;
   int minute = M5.Rtc.Minute;
   int second = M5.Rtc.Second;
-  if(hour == 20){
+  if(hour == 0 || hour == 22){
     newYearEve();
-  }
-  if(hour == 21){
-    newYearEve();
-  }
-  if(hour == 0){
-    newYearEve();
+  }else{
+    m5.Lcd.fillScreen(BLACK);
+    M5.Lcd.setCursor(0, 10);
+    M5.Lcd.printf("New Year in \n %02d hours\n %02d seconds \n %02d minutes",23-hour,59-minute,59-second);
   }
   delay(1000);
 }
