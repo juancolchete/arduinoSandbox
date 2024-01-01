@@ -19,7 +19,7 @@ void loop() {
   int hour = M5.Rtc.Hour;
   int minute = M5.Rtc.Minute;
   int second = M5.Rtc.Second;
-  if(hour == 0 || hour == 22){
+  if(hour == 0){
     newYearEve();
   }else{
     m5.Lcd.fillScreen(BLACK);
