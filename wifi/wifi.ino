@@ -10,10 +10,11 @@ void setup() {
   Serial.printf("Connecting to %s ", ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
+      m5.Lcd.fillScreen(WHITE);
       delay(500);
-      Serial.print(".");
+      m5.Lcd.fillScreen(BLACK);
   }
-  Serial.println(" CONNECTED");
+  M5.Lcd.print("Connected");
 }
 
 void loop() {
