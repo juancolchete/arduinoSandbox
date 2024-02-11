@@ -1,8 +1,8 @@
 #include "M5StickCPlus.h"
 #include <WiFi.h>
+#include ".\conf.h"
 
-const char* ssid       = "ssid";
-const char* password   = "password";
+
 
 void setup() {
   M5.begin(true, true, true);
