@@ -140,8 +140,6 @@ void on_A_pressedFor(){
     M5.Lcd.setCursor(40,30);
     M5.Lcd.setTextSize(3);
     M5.Lcd.printf("Restarting");
-    // lets restart device
-    // feedback to let user know to release button
     audio_beep();
     ESP.restart();
   }
@@ -174,7 +172,6 @@ void on_B_Pressed() {
   sprintf(message,"%s\n","Secs,AccX,AccY,AccZ,GyroX,GyroY,GyroZ");
   dumpBLE(message);
   Serial.print(message);
-  // DUMP the buffer
   for (int i=0;i<upto;i=i+7) {
     seqno = (int) acc_buff[i];
     sprintf(message,"%6.3f, %+6.2f, %+6.2f, %+6.2f, %+6.2f, %+6.2f, %+6.2f\n",
@@ -191,11 +188,10 @@ void on_B_Pressed() {
 }
 
 
-#define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E" // UART service UUID
+#define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
-// on connect/disconnect callbacks
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
       deviceConnected = true;
@@ -336,9 +332,7 @@ void loop() {
         Serial.println("start advertising");
         oldDeviceConnected = deviceConnected;
   }
-  // connecting
   if (deviceConnected && !oldDeviceConnected) {
-  // do stuff here on connecting
       oldDeviceConnected = deviceConnected;
   }
   
