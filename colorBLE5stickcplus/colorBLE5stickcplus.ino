@@ -47,7 +47,7 @@ bool folded = false;
 long seqno = 0;
 unsigned long mils_initial=0;
 unsigned long mils = 0;
-float secs = 0.0;
+int secs = 0;
 
 void acc_read(void);
 void Display_readings(float X,float Y,float Z);
@@ -248,13 +248,11 @@ void loop() {
   in_loop=true;
   Button_A.read();
   Button_B.read();
-  delay(500);
-  secs += 0.1;
 
 
   if (!deviceConnected && oldDeviceConnected) {
         delay(500);
-        secs += 0.5;
+        secs += 500;
         pServer->startAdvertising();
         Serial.println("start advertising");
         oldDeviceConnected = deviceConnected;
@@ -262,9 +260,13 @@ void loop() {
   if (deviceConnected && !oldDeviceConnected) {
       oldDeviceConnected = deviceConnected;
   }
-  if(secs % 10.0 == 0){
-    char convert[16];
-    sprintf(convert, "%.3f secs", secs);
-    dumpBLE(convert);
+  if(deviceConnected){
+    delay(1000);
+    secs += 1000;
+    if(secs/1000 % 10 == 0){
+      char convert[16];
+      sprintf(convert, "%.0f secs", (float)(secs/1000));
+      dumpBLE(convert);
+    }
   }
 }
