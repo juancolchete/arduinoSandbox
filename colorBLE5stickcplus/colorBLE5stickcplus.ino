@@ -263,7 +263,7 @@ void loop() {
   if(deviceConnected){
     delay(1000);
     secs += 1000;
-    if(secs/1000 % 10 == 0){
+    if(secs/1000 % 1 == 0){
       char convert[16];
       sprintf(convert, "%.0f secs", (float)(secs/1000));
       dumpBLE(convert);
