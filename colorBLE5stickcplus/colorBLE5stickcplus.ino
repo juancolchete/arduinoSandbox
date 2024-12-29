@@ -5,7 +5,7 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
-
+#include "pitches.h"
 BLEServer *pServer = NULL;
 BLECharacteristic * pTxCharacteristic;
 bool deviceConnected = false;
@@ -48,6 +48,8 @@ long seqno = 0;
 unsigned long mils_initial=0;
 unsigned long mils = 0;
 int secs = 0;
+bool vbalad = false;
+bool balad = false;
 
 void acc_read(void);
 void Display_readings(float X,float Y,float Z);
@@ -74,9 +76,7 @@ void Display_readings(float X,float Y,float Z,float gX,float gY,float gZ,float s
 }
 
 void audio_beep() {
-    M5.Beep.tone(4000);
-    delay(100);
-    M5.Beep.mute();
+    M5.Beep.tone(NOTE_E4);
     delay(100);
 }
 
@@ -158,6 +158,11 @@ class MyServerCallbacks: public BLEServerCallbacks {
     }
 };
 
+void randDisplayColor() {
+  int r = rand() % sizeof(COLORS_LIST);
+  M5.Lcd.fillScreen(COLORS_LIST[r]);
+}
+
 
 class MyCallbacks: public BLECharacteristicCallbacks {
     void onWrite(BLECharacteristic *pCharacteristic) {
@@ -172,8 +177,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         M5.Lcd.fillScreen(RED);
       }
       if(cmd == "b"){
-        int r = rand() % sizeof(COLORS_LIST);
-        M5.Lcd.fillScreen(COLORS_LIST[r]);
+        randDisplayColor();
       }
       if(cmd == "c"){
         if(colori < sizeof(COLORS_LIST)){
@@ -184,8 +188,16 @@ class MyCallbacks: public BLECharacteristicCallbacks {
           M5.Lcd.fillScreen(COLORS_LIST[colori]);
         }
       }
+      if(cmd == "d"){
+        balad = true;
+      }
+      if(cmd == "e"){
+        vbalad = true;
+      }
       if(cmd == "r"){
         M5.Lcd.fillScreen(BLACK);
+        vbalad=false;
+        balad=false;
       }
       
       
@@ -268,5 +280,12 @@ void loop() {
       sprintf(convert, "%.0f secs", (float)(secs/1000));
       dumpBLE(convert);
     }
+  }
+  if(balad == true){
+    audio_beep();
+  }
+  if(vbalad == true){
+    delay(100);
+    randDisplayColor();
   }
 }
