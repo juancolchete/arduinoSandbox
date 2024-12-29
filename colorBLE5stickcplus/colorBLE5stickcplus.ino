@@ -49,57 +49,11 @@ unsigned long mils_initial=0;
 unsigned long mils = 0;
 float secs = 0.0;
 
-void acc_init(int dest);
 void acc_read(void);
 void Display_readings(float X,float Y,float Z);
 void on_B_Pressed();
 void on_A_Pressed();
-void show_deltas();
 
-void show_deltas() {
-  Serial.print("Delta_T(ms)\t: ");
-  Serial.println(delta_T);
-  Serial.print("Delta_offset(ms)\t : ");
-  Serial.println(delta_offset);
-  Serial.print("Delta_adjusted(ms)\t : ");
-  Serial.println(delta_adjusted);
-  }
-  
-void acc_init(int dest) {
-  M5.Imu.Init();
-  Serial.println("IMU Initialised ");
-}
-
-
-void acc_read(int seq,int dest) {
-  
-  static bool first = true;
-  
-  M5.Imu.getAccelData(&accX, &accY, &accZ);
-  M5.Imu.getGyroData(&gyroX,&gyroY,&gyroZ);
-  
-  if (first) {
-    mils_initial = millis();
-    mils = mils_initial; 
-    first = false;
-    sprintf(message,"{\"Version\":\"%s\",\"Device\":\"%s\",\"period(ms)\":%d}\n",_version_,blename.c_str(),delta_T);
-
-    Serial.print(message);
-    sprintf(message,"Secs,SeqNo,AccX,AccY,AccZ,GyroX,GyroY,GyroZ\n");
-    Serial.print(message);
-  } else {
-    mils = millis();  
-  }
-  
-  if (dest == 1) {
-    
-    secs = (float)(mils-mils_initial) / 1000.;
-    sprintf(message,"%6.3f, %04d, %+6.2f, %+6.2f, %+6.2f, %+6.2f, %+6.2f, %+6.2f\n",
-              secs,(int)seq,
-              accX,accY,accZ,gyroX,gyroY,gyroZ);
-    Serial.print(message);
-    }
-}
 
 void Display_readings(float X,float Y,float Z,float gX,float gY,float gZ,float secs){
   M5.Lcd.setCursor(40,30);
@@ -233,12 +187,13 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if(cmd == "r"){
         M5.Lcd.fillScreen(BLACK);
       }
-       
+      
+      
     }
 };
 void setup() {
   
-  
+  Serial.println("Waiting for a client connection to send Acc data...");
   Serial.begin(115200);
   Button_A.begin();
   Button_B.begin();
@@ -252,14 +207,6 @@ void setup() {
   M5.Lcd.fillScreen(BLACK);
   M5.Lcd.setTextSize(2);
   M5.Lcd.setCursor(10, 5);
-  sprintf(message,"%s %s","CraftsMan",_version_);
-  M5.Lcd.println(message);
-  M5.Lcd.setTextSize(2);
-  
-  
-  acc_init(1);
-  delta_adjusted = delta_T - delta_offset;
-  show_deltas();
   
   uint64_t chipid = ESP.getEfuseMac();
   blename = "FLY "+String((uint32_t)(chipid>>32),HEX);
@@ -286,11 +233,8 @@ void setup() {
   pRxCharacteristic->setCallbacks(new MyCallbacks());
 
   pService->start();
-
+  char buffer[100];
   pServer->getAdvertising()->start();
-  Serial.println("Waiting for a client connection to send Acc data...");
-  
-  
 }
 
 void dumpBLE(char* msg) {
@@ -304,30 +248,13 @@ void loop() {
   in_loop=true;
   Button_A.read();
   Button_B.read();
-  
-  if (start_read) {
-    acc_read(seqno,dest);
-    acc_buff[idx]=secs;
-    
-    acc_buff[idx+1]=accX;
-    acc_buff[idx+2]=accY;
-    acc_buff[idx+3]=accZ;
-    acc_buff[idx+4]=gyroX;
-    acc_buff[idx+5]=gyroY;
-    acc_buff[idx+6]=gyroZ;
-    seqno++;   
-    idx += 7; 
-
-    if (idx >= buf_size/4) {
-      folded = true;
-      idx = 0 ;
-    }  
-    delay(delta_adjusted);
-  }
+  delay(500);
+  secs += 0.1;
 
 
   if (!deviceConnected && oldDeviceConnected) {
         delay(500);
+        secs += 0.5;
         pServer->startAdvertising();
         Serial.println("start advertising");
         oldDeviceConnected = deviceConnected;
@@ -335,5 +262,9 @@ void loop() {
   if (deviceConnected && !oldDeviceConnected) {
       oldDeviceConnected = deviceConnected;
   }
-  
+  if(secs % 10.0 == 0){
+    char convert[16];
+    sprintf(convert, "%.3f secs", secs);
+    dumpBLE(convert);
+  }
 }
