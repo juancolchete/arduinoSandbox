@@ -1,11 +1,117 @@
 #include "M5StickCPlus.h"
-#include "EasyButton.h"
 
 #include <BLEDevice.h>
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
 #include "pitches.h"
+int melody[] = {
+  NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, REST,
+  NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, REST,
+  NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, REST,
+  NOTE_A4, NOTE_G4, NOTE_A4, REST,
+  
+  NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, REST,
+  NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, REST,
+  NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, REST,
+  NOTE_A4, NOTE_G4, NOTE_A4, REST,
+  
+  NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, REST,
+  NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, REST,
+  NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, REST,
+  NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, REST,
+  
+  NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, REST,
+  NOTE_D5, NOTE_E5, NOTE_A4, REST,
+  NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, REST,
+  NOTE_C5, NOTE_A4, NOTE_B4, REST,
+  
+  // NOTE_A4, NOTE_A4,
+  //Repeat of first part
+  NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, REST,
+  NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, REST,
+  NOTE_A4, NOTE_G4, NOTE_A4, REST,
+  
+  NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, REST,
+  NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, REST,
+  NOTE_C5, NOTE_D5, NOTE_B4, NOTE_B4, REST,
+  NOTE_A4, NOTE_G4, NOTE_A4, REST,
+  
+  NOTE_E4, NOTE_G4, NOTE_A4, NOTE_A4, REST,
+  NOTE_A4, NOTE_C5, NOTE_D5, NOTE_D5, REST,
+  NOTE_D5, NOTE_E5, NOTE_F5, NOTE_F5, REST,
+  NOTE_E5, NOTE_D5, NOTE_E5, NOTE_A4, REST,
+  
+  NOTE_A4, NOTE_B4, NOTE_C5, NOTE_C5, REST,
+  NOTE_D5, NOTE_E5, NOTE_A4, REST,
+  NOTE_A4, NOTE_C5, NOTE_B4, NOTE_B4, REST,
+  NOTE_C5, NOTE_A4, NOTE_B4, REST,
+  //End of Repeat
+  
+  NOTE_E5, REST, REST, NOTE_F5, REST, REST,
+  NOTE_E5, NOTE_E5, REST, NOTE_G5, REST, NOTE_E5, NOTE_D5, REST, REST,
+  NOTE_D5, REST, REST, NOTE_C5, REST, REST,
+  NOTE_B4, NOTE_C5, REST, NOTE_B4, REST, NOTE_A4,
+  
+  NOTE_E5, REST, REST, NOTE_F5, REST, REST,
+  NOTE_E5, NOTE_E5, REST, NOTE_G5, REST, NOTE_E5, NOTE_D5, REST, REST,
+  NOTE_D5, REST, REST, NOTE_C5, REST, REST,
+  NOTE_B4, NOTE_C5, REST, NOTE_B4, REST, NOTE_A4
+};
+
+int durations[] = {
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+  
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+  
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 8, 4, 8,
+  
+  8, 8, 4, 8, 8,
+  4, 8, 4, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 4,
+  
+  4, 8,
+  //Repeat of First Part
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+  
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8,
+  
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 8, 4, 8,
+  
+  8, 8, 4, 8, 8,
+  4, 8, 4, 8,
+  8, 8, 4, 8, 8,
+  8, 8, 4, 4,
+  //End of Repeat
+  
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 8, 8, 8, 4,
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 2,
+  
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 8, 8, 8, 4,
+  4, 8, 4, 4, 8, 4,
+  8, 8, 8, 8, 8, 2
+};
 BLEServer *pServer = NULL;
 BLECharacteristic * pTxCharacteristic;
 bool deviceConnected = false;
@@ -16,135 +122,45 @@ void dumpBLE(char* msg);
 String blename;
 int COLORS_LIST[19]={0x0000,0x000F,0x03E0,0x03EF,0x7800,0x780F,0x7BE0,0xC618,0x7BEF,0x001F,0x07E0,0x07FF,0xF800,0xF81F,0xFFE0,0xFFFF,0xFDA0,0xB7E0,0xFC9F};
 int colori = 0;
-#define BTN_A 37
-#define BTN_B 39
 
 int press_duration = 2000;
-EasyButton Button_A(BTN_A,40);
-EasyButton Button_B(BTN_B,40);
-bool in_loop=false;
 
-char* _version_ = "Version 2.1 5/Mar/21";
-int dest = 1;
-int delta_T = 100;
-int delta_offset = 25;
-int delta_adjusted;
-float threshold = 1.2;
-int scale = 10;
-bool start_read = false;
-
-float accX;
-float accY;
-float accZ;
-float gyroX;
-float gyroY;
-float gyroZ;
-float acc_buff[21000];
-int buf_size = sizeof(acc_buff);
-
-long idx=0;
-bool folded = false;
 long seqno = 0;
-unsigned long mils_initial=0;
-unsigned long mils = 0;
 int secs = 0;
 bool vbalad = false;
 bool balad = false;
 
-void acc_read(void);
-void Display_readings(float X,float Y,float Z);
-void on_B_Pressed();
-void on_A_Pressed();
 
-
-void Display_readings(float X,float Y,float Z,float gX,float gY,float gZ,float secs){
-  M5.Lcd.setCursor(40,30);
-  M5.Lcd.printf("%+6.2f  ",X );
-  M5.Lcd.setCursor(140,30);
-  M5.Lcd.printf("%+6.2f  ",gX);
-  
-  M5.Lcd.setCursor(40,50);
-  M5.Lcd.printf("%+6.2f  ",Y );
-  M5.Lcd.setCursor(140,50);
-  M5.Lcd.printf("%+6.2f  ",gY);
-  M5.Lcd.setCursor(40,70);
-  M5.Lcd.printf("%+6.2f  ",Z );
-  M5.Lcd.setCursor(140,70);
-  M5.Lcd.printf("%+6.2f  ",gZ);
-  M5.Lcd.setCursor(70,90);
-  M5.Lcd.printf("%6.3f",secs);
-}
 
 void audio_beep() {
-    M5.Beep.tone(NOTE_E4);
-    delay(100);
-}
+    int size = sizeof(durations) / sizeof(int);
 
-void on_A_Pressed() {
-  if (in_loop) {
-    Serial.println("Button A has been pressed! Toggle read");
-    start_read = !start_read;
-  }
-}
-
-
-void on_A_pressedFor(){
-    Serial.println("Restarting device...");
-    M5.Lcd.fillScreen(BLACK);
-    M5.Lcd.setCursor(40,30);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.printf("Restarting");
-    audio_beep();
-    ESP.restart();
-  }
-
-void on_B_Pressed() {
-  int seqno = 0;
-  start_read = false;
-  int upto=0;
-
-  Serial.print("Size of Buff ");
-  Serial.println(sizeof(acc_buff));
-  Serial.print("folded? ");
-  Serial.println(folded);
-  Serial.print("idx ");
-  Serial.println(idx);
-  
-  if (folded) {
-    upto = buf_size/4;
-  } else {
-    upto = idx ;
-  }
-
-  
-
-  sprintf(message,"{\"Version\":\"%s\",\"Device\":\"%s\",\"period(ms)\":%d}\n",_version_,blename.c_str(),delta_T);
- 
-  dumpBLE(message);
-  Serial.print(message);
-  
-  sprintf(message,"%s\n","Secs,AccX,AccY,AccZ,GyroX,GyroY,GyroZ");
-  dumpBLE(message);
-  Serial.print(message);
-  for (int i=0;i<upto;i=i+7) {
-    seqno = (int) acc_buff[i];
-    sprintf(message,"%6.3f, %+6.2f, %+6.2f, %+6.2f, %+6.2f, %+6.2f, %+6.2f\n",
-        acc_buff[i],
-        acc_buff[i+1]*scale,acc_buff[i+2]*scale,acc_buff[i+3]*scale,
-        acc_buff[i+4],acc_buff[i+5],acc_buff[i+6]);
-    dumpBLE(message);
-    
-    Serial.print(message);
-    
-  
-      delay(10);  
+  for (int note = 0; note < size; note++) {
+    //to calculate the note duration, take one second divided by the note type.
+    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    int duration = 1000 / durations[note];
+    M5.Beep.tone(melody[note], duration);
+    if(vbalad == true){
+      randDisplayColor();
     }
+
+    //to distinguish the notes, set a minimum time between them.
+    //the note's duration + 30% seems to work well:
+    int pauseBetweenNotes = duration * 1.30;
+    delay(pauseBetweenNotes);
+
+    M5.Beep.mute();
+  }
+  delay(100);
 }
 
 
 #define SERVICE_UUID           "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+
+
+
 
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
@@ -207,12 +223,6 @@ void setup() {
   
   Serial.println("Waiting for a client connection to send Acc data...");
   Serial.begin(115200);
-  Button_A.begin();
-  Button_B.begin();
-
-  Button_A.onPressed(on_A_Pressed);
-  Button_B.onPressed(on_B_Pressed);
-  Button_A.onPressedFor(2000,on_A_pressedFor);
 
   M5.begin();
   M5.Lcd.setRotation(3);
@@ -257,9 +267,6 @@ void dumpBLE(char* msg) {
 }
 
 void loop() {
-  in_loop=true;
-  Button_A.read();
-  Button_B.read();
 
 
   if (!deviceConnected && oldDeviceConnected) {
