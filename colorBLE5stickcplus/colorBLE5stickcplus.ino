@@ -148,7 +148,6 @@ void audio_beep() {
     //the note's duration + 30% seems to work well:
     int pauseBetweenNotes = duration * 1.30;
     delay(pauseBetweenNotes);
-
     M5.Beep.mute();
   }
   delay(100);
@@ -210,6 +209,10 @@ class MyCallbacks: public BLECharacteristicCallbacks {
       if(cmd == "e"){
         vbalad = true;
       }
+      if(cmd == "f"){
+        M5.Axp.ScreenBreath(3300);
+        M5.Lcd.fillScreen(BLUE);
+      }
       if(cmd == "r"){
         M5.Lcd.fillScreen(BLACK);
         vbalad=false;
@@ -220,7 +223,6 @@ class MyCallbacks: public BLECharacteristicCallbacks {
     }
 };
 void setup() {
-  
   Serial.println("Waiting for a client connection to send Acc data...");
   Serial.begin(115200);
 
@@ -292,7 +294,7 @@ void loop() {
     audio_beep();
   }
   if(vbalad == true){
-    delay(100);
+    delay(1000);
     randDisplayColor();
   }
 }

@@ -6,7 +6,7 @@
 
 void setup() {
   M5.begin();
-  M5.Lcd.setTextSize(3);
+  M5.Lcd.setTextSize(2.5);
   Serial.printf("Connecting to %s ", ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
