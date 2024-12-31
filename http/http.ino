@@ -6,7 +6,10 @@
 #include <M5StickCPlus.h>
 const char* PARAM_INPUT_1 = "output";
 const char* PARAM_INPUT_2 = "state";
-
+uint16_t color = BLACK;
+bool right = true;
+bool running = false;
+char *calanga[12];
 // Create AsyncWebServer object on port 80
 AsyncWebServer server(80);
 
@@ -65,6 +68,13 @@ String outputState(int output){
   }
 }
 
+void showMsg(String msg,uint16_t color){
+  delay(200);
+  m5.Lcd.fillScreen(color);
+  M5.Lcd.setCursor(0, 0);
+  M5.Lcd.print(msg);
+}
+
 void setup(){
   M5.begin();
   // Serial port for debugging purposes
@@ -94,6 +104,7 @@ void setup(){
 
   // Send a GET request to <ESP_IP>/update?output=<inputMessage1>&state=<inputMessage2>
   server.on("/update", HTTP_GET, [] (AsyncWebServerRequest *request) {
+    m5.Lcd.fillScreen(BLACK);
     String inputMessage1;
     String inputMessage2;
     // GET input1 value on <ESP_IP>/update?output=<inputMessage1>&state=<inputMessage2>
@@ -101,13 +112,47 @@ void setup(){
       inputMessage1 = request->getParam(PARAM_INPUT_1)->value();
       inputMessage2 = request->getParam(PARAM_INPUT_2)->value();
       if(inputMessage1 == "1" && inputMessage2 == "1"){
+        color=RED;
         m5.Lcd.fillScreen(RED);
       }else if(inputMessage1 == "2" && inputMessage2 == "1"){
+        color=GREEN;
         m5.Lcd.fillScreen(GREEN);
       }else if(inputMessage1 == "3" && inputMessage2 == "1"){
+        color=BLUE;
         m5.Lcd.fillScreen(BLUE);
+      }else if (inputMessage1 == "4" && inputMessage2 == "1"){
+        M5.Lcd.setRotation(1);
+        M5.Lcd.setTextSize(3);
+        m5.Lcd.fillScreen(color);
+        showMsg("\n H",color);
+        showMsg("\n Ha",color);
+        showMsg("\n Hap",color);
+        showMsg("\n Happ",color);
+        showMsg("\n Happy",color);
+        showMsg("\n Happy ",color);
+        showMsg("\n Happy N",color);
+        showMsg("\n Happy Ne",color);
+        showMsg("\n Happy New",color);
+        showMsg("\n Happy New \n Y",color);
+        showMsg("\n Happy New \n Ye",color);
+        showMsg("\n Happy New \n Yea",color);
+        showMsg("\n Happy New \n Year",color);
+        showMsg("\n Happy New \n Year'",color);
+        showMsg("\n Happy New \n Year's",color);
+        showMsg("\n Happy New \n Year's E",color);
+        showMsg("\n Happy New \n Year's Ev",color);
+        showMsg("\n Happy New \n Year's Eve",color);
+        showMsg("\n Happy New \n Year's Eve!",color);
+        m5.Lcd.fillScreen(WHITE);
+        m5.Lcd.fillScreen(BLACK);
+        m5.Lcd.fillScreen(WHITE);
+        m5.Lcd.fillScreen(BLACK);
+        m5.Lcd.fillScreen(color);
+      }else if (inputMessage1 == "5" && inputMessage2 == "1"){
+        running = true;
       }else{
         m5.Lcd.fillScreen(BLACK);
+        running = false;
       }
     }else {
       inputMessage1 = "No message sent";
@@ -117,7 +162,7 @@ void setup(){
     Serial.print(inputMessage1);
     Serial.print(" - Set to: ");
     Serial.println(inputMessage2);
-    request->send(200, "text/plain", "OK");
+    request->send(200, "text/plain", "JC was here");
   });
 
   // Start server
@@ -125,6 +170,64 @@ void setup(){
 }
 
 void loop() {
-
+if(right == true){
+    right = false;
+    calanga[0] = "                   .";
+    calanga[1] = "     _.--._       /|";
+    calanga[2] = "   .'()..()`.    / /";
+    calanga[3] = "  ( `-.__.-' )  ( ( ";
+    calanga[4] = "   \\        /    \\ \\";
+    calanga[5] = "    \\      /      ) )";
+    calanga[6] = "  .' -.__.- `.-.-'_.'";
+    calanga[7] = ".'  /-____-\\  `.-'";
+    calanga[8] = "\\  /-.____.-\\  /-.";
+    calanga[9] = " \\ \\`-.__.-'/ /\\|\\|";
+    calanga[10] = ".'  `.      .'  `.";
+    calanga[11] = "|/\\/\\|    |/\\/\\|";
+  }else{
+    right = true;
+    calanga[0] = " .                      ";
+    calanga[1] = "| |       _.--._        ";
+    calanga[2] = "| |     .'()..()`.      ";
+    calanga[3] = "| |    ( `-.__.-' )     ";
+    calanga[4] = "| |     \\        /     ";
+    calanga[5] = " \\ \\     \\      /    ";
+    calanga[6] = "   \\ \\ .' -.__.- `    ";
+    calanga[7] = " .'----.'  /-____-\\    ";
+    calanga[8] = ".'.---.\\  /-.____.-\\  ";
+    calanga[9] = "|/\\|\\|\\ \\`-.____.-'\\";
+    calanga[10] = "     .' `.      .' `.   ";
+    calanga[11] = "    |/\\/\\|      |/\\/\\|";
+  }
+  if(running){
+    M5.Lcd.setTextSize(1);
+    M5.Lcd.setRotation(1);
+    M5.Lcd.setCursor(0, 30, 1);
+    M5.Lcd.printf(calanga[0]);
+    M5.Lcd.setCursor(0, 40, 1);
+    M5.Lcd.printf(calanga[1]);
+    M5.Lcd.setCursor(0, 50, 1);
+    M5.Lcd.printf(calanga[2]);
+    M5.Lcd.setCursor(0, 60, 1);
+    M5.Lcd.printf(calanga[3]);
+    M5.Lcd.setCursor(0, 70, 1);
+    M5.Lcd.printf(calanga[4]);
+    M5.Lcd.setCursor(0, 80, 1);
+    M5.Lcd.printf(calanga[5]);
+    M5.Lcd.setCursor(0, 90, 1);
+    M5.Lcd.printf(calanga[6]);
+    M5.Lcd.setCursor(0, 100, 1);
+    M5.Lcd.printf(calanga[7]);
+    M5.Lcd.setCursor(0, 110, 1);
+    M5.Lcd.printf(calanga[8]);
+    M5.Lcd.setCursor(0, 120, 1);
+    M5.Lcd.printf(calanga[9]);
+    M5.Lcd.setCursor(0, 130, 1);
+    M5.Lcd.printf(calanga[10]);
+    M5.Lcd.setCursor(0, 140, 1);
+    M5.Lcd.printf(calanga[11]);
+    M5.Lcd.setCursor(0, 150, 1);
+    delay(1000);
+  }
 }
   
